@@ -8,9 +8,6 @@ Server 2: Web Server (Nginx) + Application Server + Application Code
 
 Server 3: Database Server (MySQL Primary) + Optional Replica on another DB server
 
-pgsql
-Copy
-Edit
         User
          |
          v
