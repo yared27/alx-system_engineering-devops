@@ -1,0 +1,79 @@
+1. Distributed Web Infrastructure
+
+Diagram Description (Text-based)
+
+Server 1: Load Balancer (HAProxy)
+
+Server 2: Web Server (Nginx) + Application Server + Application Code
+
+Server 3: Database Server (MySQL Primary) + Optional Replica on another DB server
+
+pgsql
+Copy
+Edit
+        User
+         |
+         v
+ www.foobar.com (DNS -> Load Balancer IP)
+         |
+   [Load Balancer - HAProxy]
+   (Round Robin distribution)
+     /                \
+[Web + App Server]   [Web + App Server]
+(Nginx + Code)       (Nginx + Code)
+         |
+      [Database Primary]  -->  [Database Replica]
+Explanation
+Components
+Load Balancer (HAProxy)
+
+Distributes incoming traffic between multiple web servers.
+
+Improves availability and scalability.
+
+Uses Round Robin algorithm: sends each new request to the next server in the list in a circular order.
+
+Web Server (Nginx)
+
+Serves static files (HTML, CSS, JS).
+
+Forwards requests for dynamic content to the application server.
+
+Application Server
+
+Runs the application code (Python, PHP, Node.js, etc.).
+
+Handles business logic and communicates with the database.
+
+Database (MySQL)
+
+Primary Node (Master): Handles all write operations and syncs changes to replicas.
+
+Replica Node (Slave): Read-only; helps with load balancing read queries and provides redundancy.
+
+Load Balancer Setup
+Active-Active: All backend servers handle traffic at the same time, increasing throughput and fault tolerance.
+
+Active-Passive: One server handles all traffic while the other stays on standby for failover.
+
+Chosen here: Active-Active for better performance and distribution of requests.
+
+Database Cluster
+Primary-Replica (Master-Slave) replication:
+
+Primary handles all writes and pushes data to replicas.
+
+Replicas handle read queries, reducing load on the primary.
+
+Issues
+SPOF (Single Point of Failure):
+
+The load balancer is a single point of failure unless we set up a secondary load balancer.
+
+Security:
+
+No firewall or HTTPS means vulnerability to attacks (e.g., DDoS, data interception).
+
+No Monitoring:
+
+Failures could go unnoticed without a monitoring system.
