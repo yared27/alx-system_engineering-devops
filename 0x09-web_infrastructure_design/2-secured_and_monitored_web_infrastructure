@@ -1,0 +1,86 @@
+ Secured and Monitored Web Infrastructure
+
+Diagram Description (Text-based)
+
+Server 1: Load Balancer (HAProxy) + SSL Certificate + Firewall
+
+Server 2: Web Server (Nginx) + Application Server + Firewall + Monitoring Client
+
+Server 3: Database (MySQL Primary + Replica optional) + Firewall + Monitoring Client
+
+
+        User
+         |
+         v
+ www.foobar.com (DNS -> LB IP)
+         |
+  [Firewall #1]
+         |
+ [Load Balancer - HAProxy + SSL]
+         |
+    /             \
+[Firewall #2]   [Firewall #2]
+[Web+App Server + Monitoring]    [Web+App Server + Monitoring]
+         |
+     [Firewall #3]
+         |
+ [Database Primary + Monitoring]  -->  [Database Replica]
+Explanation
+Additional Components
+Firewalls (3 total)
+
+One before the load balancer (blocks malicious traffic from entering the network).
+
+One before each web server (protects against attacks targeting application layer).
+
+One before the database (restricts DB access to only application servers).
+
+SSL Certificate
+
+Encrypts traffic between the user’s browser and the load balancer.
+
+Protects sensitive data from interception.
+
+Ensures https://www.foobar.com is secure.
+
+Monitoring Clients
+
+Installed on each server to collect performance metrics (CPU, memory, QPS, errors).
+
+Sends data to monitoring service (Sumologic, Datadog, etc.) for real-time analysis.
+
+Why These Additions Are Important
+Firewalls: Prevent unauthorized access, block suspicious IPs, and reduce exposure to attacks.
+
+HTTPS/SSL: Protects user data, prevents man-in-the-middle attacks, improves trust.
+
+Monitoring: Detects failures early, tracks performance trends, and supports capacity planning.
+
+How Monitoring Works
+Monitoring client collects logs and metrics (e.g., requests per second, response time).
+
+Data is sent to a monitoring server or cloud platform.
+
+Dashboards and alerts are created to track health and detect anomalies.
+
+Monitoring QPS:
+
+Use the monitoring client to count incoming HTTP requests per second on the web server.
+
+Metrics can be graphed over time to detect spikes or unusual drops.
+
+Issues
+SSL Termination at Load Balancer:
+
+Traffic between the load balancer and backend servers may be unencrypted, risking data exposure if the internal network is compromised.
+
+Single MySQL Primary:
+
+If it fails, no writes can be made until a failover occurs.
+
+All-in-One Servers:
+
+If each server has all components (DB, web server, app server), a compromise in one service could affect all services on that server.
+
+Makes scaling individual components harder.
+
