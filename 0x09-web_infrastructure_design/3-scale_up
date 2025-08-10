@@ -1,0 +1,49 @@
+3. Scale up - Web Infrastructure Design
+Overview
+This project demonstrates scaling a web infrastructure by splitting the components into separate servers and introducing a load balancer configured in a cluster for high availability. The setup improves reliability, performance, and maintainability of the web application.
+
+Infrastructure Components
+Component	Description	Reason for Adding
+Web Server	Handles HTTP requests, serves static content	Separating web server improves performance and security by offloading static content delivery and initial requests.
+Application Server	Runs the backend logic, processes dynamic requests	Isolating app server allows independent scaling and easier maintenance of backend code.
+Database Server	Stores persistent data	Dedicated database server ensures data integrity and allows tuning database performance separately.
+Load Balancer (HAProxy)	Distributes incoming traffic among web servers	Improves availability and scalability by balancing load and preventing single point of failure.
+Load Balancer Cluster	Multiple HAProxy instances configured as cluster	Ensures high availability—if one load balancer fails, the other continues routing traffic seamlessly.
+
+Architecture Diagram (Conceptual)
+
+           +----------------------+     +----------------------+
+           |  Load Balancer 1 (HAProxy) Cluster                      |
+           +----------------------+     +----------------------+
+                      |                                |
+               +-------------+                  +-------------+
+               | Web Server 1|                  | Web Server 2|
+               +-------------+                  +-------------+
+                      |                                |
+              +----------------+             +----------------+
+              | App Server 1   |             | App Server 2   |
+              +----------------+             +----------------+
+                         \                      /
+                          \                    /
+                          +------------------+
+                          | Database Server  |
+                          +------------------+
+How to Use
+Each component runs on its own server or virtual machine.
+
+HAProxy load balancers are set up in cluster mode to share the load and monitor each other.
+
+Incoming requests hit the load balancer, which distributes traffic to web servers.
+
+Web servers forward dynamic requests to application servers.
+
+Application servers communicate with the database server to fetch or update data.
+
+Benefits
+Scalability: Easily add more web/app servers behind the load balancer.
+
+Reliability: Load balancer cluster prevents single points of failure.
+
+Performance: Each server focuses on a specific role, optimizing resource use.
+
+Maintainability: Updates or restarts can be done on one server without downtime.
