@@ -1,0 +1,82 @@
+Scenario:
+A user wants to access your website www.foobar.com.
+
+1. Components in the infrastructure
+We have:
+
+1 server — a physical or virtual machine (example: cloud VPS)
+
+Web server — Nginx
+
+Application server — runs the backend code (e.g., Gunicorn for Python, PHP-FPM for PHP)
+
+Application files — the actual codebase (HTML, CSS, JS, backend logic)
+
+Database — MySQL
+
+Domain name — foobar.com with a www record pointing to 8.8.8.8 (server IP)
+
+2. Flow of a request
+User types www.foobar.com into the browser.
+
+Browser checks DNS — www is a CNAME or A record (here it's an A record) pointing to IP 8.8.8.8.
+
+The request goes to the server at 8.8.8.8.
+
+Nginx (web server) receives the request:
+
+Serves static files (images, CSS, JS) directly.
+
+Passes dynamic requests to the application server.
+
+Application server runs your backend code (e.g., Django, Flask, Laravel).
+
+If data is needed, the application server queries MySQL database.
+
+Database returns data → application server processes it → sends it back to Nginx.
+
+Nginx sends the final response (HTML + data) to the user’s browser.
+
+3. Roles of each part
+Server: Physical/virtual machine hosting the stack.
+
+Domain name: Human-friendly name mapping to an IP address.
+
+DNS record www: An A record pointing www.foobar.com → 8.8.8.8.
+
+Web server (Nginx): Handles HTTP requests, serves static content, forwards dynamic requests to the app server.
+
+Application server: Runs the backend code and business logic.
+
+Database (MySQL): Stores and retrieves structured data.
+
+Communication: Uses the HTTP/HTTPS protocol over TCP/IP.
+
+4. Problems with this setup
+SPOF (Single Point of Failure): If the server goes down, the whole website is offline.
+
+Downtime during maintenance: Restarting the server or web server during code updates causes outages.
+
+No scalability: If traffic spikes, one server may not handle it.
+
+5. Whiteboard Diagram Layout
+pgsql
+
+[ User Browser ]
+       |
+       v
+   (DNS Lookup)
+ www.foobar.com --> A record --> 8.8.8.8
+       |
+       v
+   [ Server: 8.8.8.8 ]
+       |
+   +---+---+
+   | Nginx | <-- Serves static files
+   +---+---+
+       |
+       v
+[ Application Server ]
+       |
+       v
+  [ MySQL Database ]
